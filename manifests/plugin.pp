@@ -23,8 +23,13 @@ define redmine::plugin (
 
   $install_dir = "${redmine::install_dir}/plugins/${name}"
   if $ensure == absent {
+    if ($redmine::www_server=="apache") {
+      $notify_class = Class['apache::service']
+    } elsif ($redmine::www_server=="nginx") {
+      $notify_class = Class['nginx::service']
+    }
     exec { "rake redmine:plugins:migrate NAME=${name} VERSION=0":
-      notify      => Class['apache::service'],
+      notify      => $notify_class,
       path        => ['/bin','/usr/bin', '/usr/local/bin'],
       environment => ['HOME=/root','RAILS_ENV=production','REDMINE_LANG=en'],
       provider    => 'shell',

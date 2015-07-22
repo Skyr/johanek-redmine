@@ -1,12 +1,22 @@
 # Class redmine::config
 class redmine::config {
 
-  require 'apache'
-
-  File {
-    owner => $apache::params::user,
-    group => $apache::params::group,
-    mode  => '0644'
+  if ($redmine::www_server=="apache") {
+    require 'apache'
+    File {
+      owner => $apache::params::user,
+      group => $apache::params::group,
+      mode  => '0644'
+    }
+  } elsif ($redmine::www_server=="nginx") {
+    require 'nginx'
+    File {
+      owner => $nginx::params::user,
+      group => $nginx::params::group,
+      mode  => '0644'
+    }
+  } else {
+    fail("Unknown www_server #{www_server}")
   }
 
   file { $redmine::webroot:
@@ -54,16 +64,20 @@ class redmine::config {
     }
   } else {
     if $redmine::create_vhost {
-      apache::vhost { 'redmine':
-        port            => '80',
-        docroot         => "${redmine::webroot}/public",
-        servername      => $redmine::vhost_servername,
-        serveraliases   => $redmine::vhost_aliases,
-        options         => 'Indexes FollowSymlinks ExecCGI',
-        custom_fragment => "
-          RailsBaseURI /
-          PassengerPreStart http://${redmine::vhost_servername}
-          ",
+      if ("${redmine::www_server}"=="apache") {
+        apache::vhost { 'redmine':
+          port            => '80',
+          docroot         => "${redmine::webroot}/public",
+          servername      => $redmine::vhost_servername,
+          serveraliases   => $redmine::vhost_aliases,
+          options         => 'Indexes FollowSymlinks ExecCGI',
+          custom_fragment => "
+            RailsBaseURI /
+            PassengerPreStart http://${redmine::vhost_servername}
+            ",
+        }
+      } elsif ("${redmine::www_server}"=="nginx") {
+        fail("create_vhost for nginx not (yet) implemented")
       }
     }
   }

@@ -126,6 +126,10 @@
 #   True by default.
 #   When disabling this option the vhost config is your responsibility.
 #
+# [*www_server*]
+#   Select which web server to depend on.
+#   Defaults to apache, must be apache or nginx.
+#
 class redmine (
   $version              = undef,
   $download_url         = 'https://github.com/redmine/redmine',
@@ -150,6 +154,7 @@ class redmine (
   $plugins              = {},
   $www_subdir           = undef,
   $create_vhost         = true,
+  $www_server           = 'apache',
 ) {
   class { 'redmine::params': } ->
   class { 'redmine::download': } ->
