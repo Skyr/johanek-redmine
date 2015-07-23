@@ -147,7 +147,7 @@ class redmine (
   $smtp_password        = '',
   $vhost_aliases        = 'redmine',
   $vhost_servername     = 'redmine',
-  $webroot              = "${apache::docroot}/redmine",
+  $webroot              = "/var/www/redmine",
   $install_dir          = '/usr/src/redmine',
   $provider             = 'git',
   $override_options     = {},
