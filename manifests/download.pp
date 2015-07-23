@@ -31,6 +31,11 @@ class redmine::download {
       command => "mkdir -p ${redmine::install_dir} && tar xvzf redmine.tar.gz --strip-components=1 -C ${redmine::install_dir}",
       creates => $redmine::install_dir,
       require => Package['tar'],
+    } ->
+    file { '/usr/src/redmine':
+      owner => 'root',
+      group => 'root',
+      recurse => true,
     }
   }
 }
