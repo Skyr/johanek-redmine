@@ -26,14 +26,13 @@ class redmine::config {
 
   # user switching makes passenger run redmine as the owner of the startup file
   # which is config.ru or config/environment.rb depending on the Rails version
-  file { [
-      "${redmine::install_dir}/config/environment.rb"]:
-    ensure => 'present',
+  file { "${redmine::install_dir}/config/environment.rb":
+    ensure  => present,
   }
 
   file { "${redmine::install_dir}/config.ru":
     ensure => file,
-    source => 'puppet:///modules/redmine/config.ru',
+    content => template('redmine/config.ru.erb'),
     owner => 'root',
     group => 'root',
   }
@@ -70,7 +69,7 @@ class redmine::config {
   if $redmine::www_subdir {
     file_line { 'redmine_relative_url_root':
       path  => "${redmine::install_dir}/config/environment.rb",
-      line  => "Redmine::Utils::relative_url_root = '/${redmine::www_subdir}'",
+      line  => "Redmine::Utils::relative_url_root = '${redmine::context_root}'",
       match => '^Redmine::Utils::relative_url_root',
     }
   } else {
