@@ -11,8 +11,8 @@ class redmine::config {
   } elsif ($redmine::www_server=="nginx") {
     require 'nginx'
     File {
-      owner => $nginx::params::user,
-      group => $nginx::params::group,
+      owner => $nginx::params::daemon_user,
+      group => $nginx::params::global_group,
       mode  => '0644'
     }
   } else {
@@ -34,6 +34,8 @@ class redmine::config {
   file { "${redmine::install_dir}/config.ru":
     ensure => file,
     source => 'puppet:///modules/redmine/config.ru',
+    owner => 'root',
+    group => 'root',
   }
 
   file { [
@@ -53,12 +55,16 @@ class redmine::config {
 
   file { "${redmine::install_dir}/config/database.yml":
     ensure  => present,
-    content => template('redmine/database.yml.erb')
+    content => template('redmine/database.yml.erb'),
+    owner => 'root',
+    group => 'root',
   }
 
   file { "${redmine::install_dir}/config/configuration.yml":
     ensure  => present,
-    content => template('redmine/configuration.yml.erb')
+    content => template('redmine/configuration.yml.erb'),
+    owner => 'root',
+    group => 'root',
   }
 
   if $redmine::www_subdir {
