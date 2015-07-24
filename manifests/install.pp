@@ -34,11 +34,33 @@ class redmine::install {
     provider => gem
   } ->
 
+  file { "${redmine::install_dir}/Gemfile.local":
+    ensure => file,
+    source => 'puppet:///modules/redmine/Gemfile.local',
+  } ->
+
   exec { 'bundle_redmine':
     command => "bundle install --gemfile ${redmine::install_dir}/Gemfile --without ${without_gems}",
     creates => "${redmine::install_dir}/Gemfile.lock",
     require => [ Package['bundler'], Package['make'], Package['gcc'], Package[$packages] ],
     notify  => Exec['rails_migrations'],
+  }
+
+  file { "${redmine::install_dir}/config/unicorn.rb":
+    ensure  => present,
+    content => template('redmine/unicorn.rb.erb')
+  }
+
+  file { "/etc/init.d/redmine":
+    ensure  => present,
+    mode => '0755',
+    content => template('redmine/initscript.erb')
+  }
+
+  if ($redmine::www_server=="nginx") {
+    service { 'redmine':
+      ensure => running,
+    }
   }
 
   create_resources('redmine::plugin', $redmine::plugins)
