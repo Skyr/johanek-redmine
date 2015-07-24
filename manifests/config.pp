@@ -27,14 +27,19 @@ class redmine::config {
   # user switching makes passenger run redmine as the owner of the startup file
   # which is config.ru or config/environment.rb depending on the Rails version
   file { [
-      "${redmine::install_dir}/config.ru",
       "${redmine::install_dir}/config/environment.rb"]:
     ensure => 'present',
+  }
+
+  file { "${redmine::install_dir}/config.ru":
+    ensure => file,
+    source => 'puppet:///modules/redmine/config.ru',
   }
 
   file { [
       "${redmine::install_dir}/files",
       "${redmine::install_dir}/tmp",
+      "${redmine::install_dir}/tmp/pids",
       "${redmine::install_dir}/tmp/sockets",
       "${redmine::install_dir}/tmp/thumbnails",
       "${redmine::install_dir}/tmp/cache",

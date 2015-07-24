@@ -100,6 +100,10 @@
 #   where DOCROOT is the document root of your apache server,
 #   usually /var/www or /var/www/html
 #
+# [*context_root*]
+#   URL path where redmine will be called. Default is "/",
+#   meaning that your instance is accessible via "http://.../"
+#
 # [*install_dir*]
 #   Path where redmine will be installed
 #   Default: '/usr/src/redmine'
@@ -148,6 +152,7 @@ class redmine (
   $vhost_aliases        = 'redmine',
   $vhost_servername     = 'redmine',
   $webroot              = "/var/www/redmine",
+  $context_root         = '/',
   $install_dir          = '/usr/src/redmine',
   $provider             = 'git',
   $override_options     = {},

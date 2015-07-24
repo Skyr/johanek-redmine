@@ -22,7 +22,7 @@ ENV=production
 #PATH="$RBENV_ROOT/bin:$RBENV_ROOT/shims:$PATH"
 #SET_PATH="cd $APP_ROOT; rbenv rehash; rbenv local $RBENV_RUBY_VERSION"
 SET_PATH="cd $APP_ROOT"
-DAEMON="bundle exec unicorn_rails"
+DAEMON="RAILS_RELATIVE_URL_ROOT=\"<%= scope.lookupvar('redmine::context_root') %>\" bundle exec unicorn_rails"
 DAEMON_OPTS="-c $APP_ROOT/config/unicorn.rb -E $ENV -D"
 CMD="$SET_PATH; $DAEMON $DAEMON_OPTS"
 NAME=unicorn
