@@ -59,7 +59,10 @@ class redmine::install {
 
   if ($redmine::www_server=="nginx") {
     service { 'redmine':
-      ensure => running,
+      ensure => true,
+    }
+    exec { 'redmine_startup':
+      command => '/usr/sbin/update-rc.d redmine defaults',
     }
   }
 
